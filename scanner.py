@@ -9,7 +9,7 @@ from models import FoundLink
 logger = logging.getLogger(__name__)
 
 DOMAINS = ["suno", "udio", "youtube", "soundcloud", "spotify"]
-DOMAIN_RE = r"https?://(?:\w+\.)?(?:{0})\.\w+/\S+"  # umm
+DOMAIN_RE = r"https?://(?:[\w-]+\.)*(?:{0})\.[a-z]+/\S+"  # umm
 
 # flake8: noqa: E731
 _re_domain = lambda s: re.compile(DOMAIN_RE.format(s), re.IGNORECASE)
