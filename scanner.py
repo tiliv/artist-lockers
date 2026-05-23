@@ -19,16 +19,50 @@ PLATFORM_PATTERNS: dict[str, re.Pattern] = {
     for name in DOMAINS
 }
 
+# MIME prefixes that indicate audio or video attachments
+MEDIA_MIME_PREFIXES = ("audio/", "video/")
+
 
 def _detect_platform(url: str) -> Optional[str]:
     for platform, pattern in PLATFORM_PATTERNS.items():
-        if pattern.match(url):
+        if pattern.search(url):
             return platform
     return None
 
 
 def _extract_urls(text: str) -> list[str]:
     return COMBINED_PATTERN.findall(text)
+
+
+def _extract_media(message: discord.Message) -> list[tuple[str, str]]:
+    """
+    Extract (url, platform) pairs from message attachments and embeds.
+    Attachments: audio/* or video/* MIME types — platform is "discord_cdn".
+    Embeds: any embed with a video field, or whose URL matches a known domain.
+    Returns a flat list parallel to what _extract_urls produces for text content.
+    """
+    hits: list[tuple[str, str]] = []
+
+    for attachment in message.attachments:
+        ct = attachment.content_type or ""
+        if ct.startswith(MEDIA_MIME_PREFIXES):
+            hits.append((attachment.url, "discord_cdn"))
+
+    for embed in message.embeds:
+        url = embed.url or ""
+        # Prefer embed.video.url for richer provider embeds (YouTube etc.)
+        if embed.video and embed.video.url:
+            url = embed.video.url
+        if not url:
+            continue
+        platform = _detect_platform(url)
+        if platform:
+            hits.append((url, platform))
+        elif embed.video:
+            # Has video but unknown domain — still worth capturing
+            hits.append((url, "embed"))
+
+    return hits
 
 
 def _channel_type_label(channel: discord.abc.GuildChannel | discord.Thread) -> str:
@@ -44,8 +78,9 @@ def _build_found_link(
     message: discord.Message,
     channel: discord.abc.GuildChannel | discord.Thread,
     parent: Optional[discord.abc.GuildChannel] = None,
+    platform: Optional[str] = None,
 ) -> Optional[FoundLink]:
-    platform = _detect_platform(url)
+    platform = platform or _detect_platform(url)
     if not platform:
         return None
 
@@ -107,19 +142,22 @@ async def scan_messages(
         async for message in channel.history(
             limit=None, oldest_first=True, after=after
         ):
-            # Always yield the message_id as a cursor advance signal
-            if message.content:
-                for url in _extract_urls(message.content):
-                    link = _build_found_link(url, message, source_channel, parent)
+            # Gather hits from text content and embeds/attachments
+            # url_hits: list[tuple[str, Optional[str]]] = [
+            #     (url, None) for url in (_extract_urls(message.content) if message.content else [])
+            # ]
+            media_hits: list[tuple[str, Optional[str]]] = _extract_media(message)
+            # all_hits = url_hits + media_hits
+            all_hits = media_hits
+
+            if all_hits:
+                for url, platform in all_hits:
+                    link = _build_found_link(url, message, source_channel, parent, platform=platform)
                     if link:
                         yield link, message.id
-                        break  # one yield per message is enough to advance cursor
-                else:
-                    # No links found but we still need to advance the cursor;
-                    # yield None link with the message_id
-                    yield None, message.id
-            else:
-                yield None, message.id
+
+            # Always advance cursor
+            yield None, message.id
     except discord.Forbidden:
         logger.warning("No permission to read %s", getattr(source_channel, "name", source_channel))
     except discord.HTTPException as e:
