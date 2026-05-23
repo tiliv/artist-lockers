@@ -1,8 +1,23 @@
 ---
+title: Index
 ---
-<html>
+<html lang="en">
 <head>
-  <title>Artist Lockers</title>
+  <title>{{ site.title }}: {{ page.title }}</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+  <meta property="og:site_name" content="{{ site.title }}" />
+  <meta property="og:title" content="{{ page.title }}" />
+  <meta property="og:url" content="{{ page.url | absolute_url }}" />
+  <meta property="og:description" content="See what's already there!" />
+  <meta property="og:type" content="{% if page.url == '/' %}website{% else %}article{% endif %}" />
+  <meta property="og:locale" content="en_US">
+
+  <link rel="stylesheet" href="/css/site.css" />
+
 </head>
 <body>
   {% assign GUILD = "" %}
@@ -15,48 +30,40 @@
   {% for link in category[1].refs.links %}
 
   {% unless GUILD == link.guild.id %}
+  {% if GUILD %}</section>{% endif %}
   <section>
-    <h2>{{ link.guild.name }}</h2>
+    <h2>⌂ {{ link.guild.name }}</h2>
   {% endunless %}
 
-    {% unless CATEGORY == link.category.id %}
-    <ol><h3>{{ link.category.name }}</h3>
-    {% endunless %}
+  {% unless CATEGORY == link.category.id %}
+  {% if CATEGORY %}</ul>{% endif %}
+  <ul><h3>› {{ link.category.name }}</h3>
+  {% endunless %}
 
-      {% unless PARENT == link.parent_channel.id %}
-      <h4>{{ link.parent_channel.name }}</h4>
-      {% endunless %}
+  {% unless CHANNEL == link.channel.id %}
+  {% if CHANNEL %}</ol></li>{% endif %}
+  <li data-channel-type="{{ link.channel.type }}"><span>
+    {%- if link.parent_channel.name %}{{ link.parent_channel.name }} / {% endif -%}
+    {{ link.channel.name -}}
+  </span>
+  <ol>
+  {% endunless %}
 
-      {% unless CHANNEL == link.channel.id %}
-      <li><h5>{{ link.channel.name }}</h5>
-        <ol>
-      {% endunless %}
+  <li
+    data-platform="{{ link.platform }}"
+    data-deep-link="{{ link.deep_link }}"
+  >
+    <a href="{{ link.url }}" rel="noreferrer nofollow">{{ link.message.content }}</a>
+  </li>
 
-          <li>
-            <a href="{{ link.url }}" rel="noreferrer nofollow">{{ link.content }}</a>
-            <textarea readonly>{{ link | jsonify }}</textarea>
-          </li>
-
-      {% unless PARENT == link.parent_channel.id %}
-      {% assign PARENT  = link.parent_channel.id %}
-      {% endunless %}
-
-      {% unless CHANNEL == link.channel.id %}
-      {% assign CHANNEL  = link.channel.id %}
-        </ol>
-      </li>
-      {% endunless %}
-
-    {% unless CATEGORY == link.category.id %}
-    {% assign CATEGORY  = link.category.id %}
-    </ol>
-    {% endunless %}
-
+  {% unless CHANNEL == link.channel.id %}
+  {% assign CHANNEL  = link.channel.id %}{% endunless %}
+  {% unless PARENT == link.parent_channel.id %}
+  {% assign PARENT  = link.parent_channel.id %}{% endunless %}
+  {% unless CATEGORY == link.category.id %}
+  {% assign CATEGORY  = link.category.id %}{% endunless %}
   {% unless GUILD == link.guild.id %}
-  {% assign GUILD = link.guild.id %}
-  </section>
-  {% endunless %}
-  {{ link.url }}
+  {% assign GUILD  = link.guild.id %}{% endunless %}
 
   {% endfor %}
   {% endfor %}
