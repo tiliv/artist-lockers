@@ -10,6 +10,8 @@ wheels/
 .venv
 .env
 .DS_Store
-_data
-_site
 vendor
+
+# commit _site if you want to build locally without CI,
+# or if you have nothing to build and it's just real HTML/css/js, etc.
+_site
