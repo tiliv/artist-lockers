@@ -12,8 +12,7 @@
 
   {% for guild in site.data %}
   {% for category in guild[1] %}
-  {% for index in category[1].refs %}
-  {% for link in index.links %}
+  {% for link in category[1].refs.links %}
 
   {% unless GUILD == link.guild.id %}
   <section>
@@ -59,7 +58,6 @@
   {% endunless %}
   {{ link.url }}
 
-  {% endfor %}
   {% endfor %}
   {% endfor %}
   {% endfor %}

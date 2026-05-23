@@ -11,4 +11,5 @@ wheels/
 .env
 .DS_Store
 _data
+_site
 vendor

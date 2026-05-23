@@ -1,11 +1,5 @@
 source "https://rubygems.org"
 
-# Same major/minor line GitHub Pages uses
-gem "jekyll", "~> 3.9.3"
-
-# Markdown engine + GitHub-flavored parser
-gem "kramdown", "~> 2.3"
-gem "kramdown-parser-gfm", "~> 1.1"
-
-# Syntax highlighter
-gem "rouge", "~> 3.26"
+# Modern version, NOT the GitHub Pages version at 3.9.x
+gem "jekyll", "~> 4.3"
+gem "webrick"
