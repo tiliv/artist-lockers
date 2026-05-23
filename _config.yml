@@ -1,0 +1,32 @@
+title: Artist Lockers
+
+preferences:
+  dark: null
+
+# Jekyll options
+theme: null
+permalink: pretty
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  hard_wrap: false
+  gfm_quirks: paragraph_end
+  template: ""
+  math_engine: mathjax
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    default_lang: plaintext
+sass:
+  style: compressed
+
+defaults:
+  - scope: {path: ""}
+    values:
+      preferences: locker
+exclude:
+  - CNAME
+  - .bundle
+  - Gemfile
+  - Gemfile.lock
+  - vendor
