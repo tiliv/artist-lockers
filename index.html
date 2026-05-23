@@ -13,10 +13,10 @@ title: Index
   <meta property="og:title" content="{{ page.title }}" />
   <meta property="og:url" content="{{ page.url | absolute_url }}" />
   <meta property="og:description" content="See what's already there!" />
-  <meta property="og:type" content="{% if page.url == '/' %}website{% else %}article{% endif %}" />
+  <meta property="og:type" content="website" />
   <meta property="og:locale" content="en_US">
 
-  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="css/site.css" />
 
 </head>
 <body>
@@ -50,8 +50,8 @@ title: Index
   {% endunless %}
 
   <li data-platform="{{ link.platform }}">
-    <a href="{{ link.deep_link }}" data-icon></a>
-    <a href="{{ link.url }}">{{ link.url }}</a>
+    <a href="{{ link.deep_link }}" data-icon>↖</a>
+    <a href="{{ link.url }}" data-icon="platform"></a>
   </li>
 
   {% assign CHANNEL = link.channel.id %}

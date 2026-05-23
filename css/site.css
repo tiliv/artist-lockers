@@ -34,11 +34,15 @@ ul > li::before, [data-icon] {
 [data-platform="youtube"] { --platform-icon: url("../img/youtube.png"); }
 [data-platform="spotify"] { --platform-icon: url("../img/spotify.png"); }
 [data-platform="applemusic"] { --platform-icon: url("../img/applemusic.png"); }
-[data-platform] > [data-icon] {
+[data-platform] > [data-icon="platform"] {
   height: 2rem;
   background-image: var(--platform-icon);
   background-position: center center;
   background-size: 100% 100%;
+}
+a[data-icon]:not(:hover) {
+  text-decoration: none;
+  color: inherit;
 }
 
 ul /* Channels */ {
@@ -68,7 +72,7 @@ ol /* Messages */ {
 
   > li {
     list-style: none;
-    padding: 0.2rem 1rem;
+    /* padding: 0.2rem 1rem; */
 
     > p {
       margin: 0;
