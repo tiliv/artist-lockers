@@ -1,7 +1,36 @@
 {
-  "exported_at": "2026-05-23T18:56:57.802166+00:00",
-  "total_links": 3,
+  "exported_at": "2026-05-23T19:37:01.104366+00:00",
+  "total_links": 5,
   "links": [
+    {
+      "url": "https://cdn.discordapp.com/attachments/1507611940648910938/1507676702254567434/2-3.mp3?ex=6a12c4d9&is=6a117359&hm=f0b677fe5044ad74946e18e9168793b921d038815e1d49530603a5cd8b86d9a6&",
+      "platform": "discord_cdn",
+      "deep_link": "https://discord.com/channels/243230995954925568/1507611940648910938/1507676702099111996",
+      "message": {
+        "id": "1507676702099111996",
+        "content": "channel sample",
+        "timestamp": "2026-05-23T09:28:57.059000+00:00",
+        "author_id": "106584132900941824",
+        "author_name": "thenautumn"
+      },
+      "channel": {
+        "id": "1507611940648910938",
+        "name": "example",
+        "type": "text"
+      },
+      "parent_channel": {
+        "id": null,
+        "name": null
+      },
+      "category": {
+        "id": "1507611893622378587",
+        "name": "Autumn's Locker"
+      },
+      "guild": {
+        "id": "243230995954925568",
+        "name": "Test"
+      }
+    },
     {
       "url": "https://www.udio.com/songs/bkTZvRXiFSNLu6BzST2Lkw",
       "platform": "udio",
@@ -32,7 +61,7 @@
       }
     },
     {
-      "url": "https://www.youtube.com/watch?v=aaTpYIb4mcs",
+      "url": "https://www.youtube.com/embed/aaTpYIb4mcs",
       "platform": "youtube",
       "deep_link": "https://discord.com/channels/243230995954925568/1507611940648910938/1507819507702300824",
       "message": {
@@ -68,6 +97,35 @@
         "id": "1507612124317483139",
         "content": "main content\nhttps://www.udio.com/songs/bkTZvRXiFSNLu6BzST2Lkw",
         "timestamp": "2026-05-23T05:12:20.516000+00:00",
+        "author_id": "106584132900941824",
+        "author_name": "thenautumn"
+      },
+      "channel": {
+        "id": "1507612124317483139",
+        "name": "This is the Title",
+        "type": "forum_post"
+      },
+      "parent_channel": {
+        "id": "1507611981371277373",
+        "name": "forum-example"
+      },
+      "category": {
+        "id": "1507611893622378587",
+        "name": "Autumn's Locker"
+      },
+      "guild": {
+        "id": "243230995954925568",
+        "name": "Test"
+      }
+    },
+    {
+      "url": "https://cdn.discordapp.com/attachments/1507612124317483139/1507612526190530590/1-2.mp3?ex=6a1331d4&is=6a11e054&hm=56878b83e598e7e2d682d931bda62d94a48c6d869b7cc61db51aae8c3bcd9269&",
+      "platform": "discord_cdn",
+      "deep_link": "https://discord.com/channels/243230995954925568/1507612124317483139/1507612526077022209",
+      "message": {
+        "id": "1507612526077022209",
+        "content": "an audio snip",
+        "timestamp": "2026-05-23T05:13:56.303000+00:00",
         "author_id": "106584132900941824",
         "author_name": "thenautumn"
       },
