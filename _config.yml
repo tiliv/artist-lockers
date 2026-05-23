@@ -6,7 +6,11 @@ preferences:
 # Jekyll options
 theme: null
 permalink: pretty
-
+plugins:
+  - jekyll-link-attributes
+kramdown:
+  input: GFM
+  template: ""
 defaults:
   - scope: {path: ""}
     values:
@@ -22,3 +26,8 @@ exclude:
   - "*.toml"
   - "*.yaml"
   - "*.lock"
+
+external_links:
+  enabled: true
+  rel: external nofollow noopener
+  target: _blank

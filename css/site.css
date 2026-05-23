@@ -1,3 +1,46 @@
+body {
+  color: oklab(81.719% 0 -0.00009);
+  margin: 0;
+  padding: 0;
+}
+a {
+  color: oklab(74.357% -0.02027 -0.10769);
+}
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+
+  > span {
+    vertical-align: middle;
+  }
+}
+
+html > body { background-color: oklab(35.618% 0 -0.00004); }
+ div > ul   { background-color: oklab(28.908% 0 -0.00003); }
+  ul > li   { background-color: oklab(22.213% 0 -0.00003); }
+  ol > li   { background-color: oklab(19.573% 0 -0.00002); }
+
+ul > li::before, [data-icon] {
+  display: inline-block;
+  font-size: 2rem;
+  font-weight: bold;
+  width: 2rem;
+  height: 2rem;
+  text-align: center;
+  vertical-align: middle;
+}
+[data-platform="discord_cdn"] { --platform-icon: url("../img/discord.png"); }
+[data-platform="udio"] { --platform-icon: url("../img/udio.png"); }
+[data-platform="suno"] { --platform-icon: url("../img/suno.png"); }
+[data-platform="youtube"] { --platform-icon: url("../img/youtube.png"); }
+[data-platform="spotify"] { --platform-icon: url("../img/spotify.png"); }
+[data-platform="applemusic"] { --platform-icon: url("../img/applemusic.png"); }
+[data-platform] > [data-icon] {
+  height: 2rem;
+  background-image: var(--platform-icon);
+  background-position: center center;
+  background-size: 100% 100%;
+}
+
 ul /* Channels */ {
   padding: 0;
   margin: 0;
@@ -6,16 +49,13 @@ ul /* Channels */ {
     list-style: none;
 
     > span {
+      vertical-align: middle;
       font-weight: bold;
       font-size: 1.2em;
     }
   }
   > li::before {
     content: "#";
-    display: inline-block;
-    font-size: 1rem;
-    width: 1.5rem;
-    text-align: center;
   }
   > li[data-channel-type="forum_post"]::before {
     content: "💬";
@@ -28,6 +68,10 @@ ol /* Messages */ {
 
   > li {
     list-style: none;
+    padding: 0.2rem 1rem;
 
+    > p {
+      margin: 0;
+    }
   }
 }
