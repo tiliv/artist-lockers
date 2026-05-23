@@ -1,0 +1,67 @@
+---
+---
+<html>
+<head>
+  <title>Artist Lockers</title>
+</head>
+<body>
+  {% assign GUILD = "" %}
+  {% assign CATEGORY = "" %}
+  {% assign PARENT = "" %}
+  {% assign CHANNEL = "" %}
+
+  {% for guild in site.data %}
+  {% for category in guild[1] %}
+  {% for index in category[1].refs %}
+  {% for link in index.links %}
+
+  {% unless GUILD == link.guild.id %}
+  <section>
+    <h2>{{ link.guild.name }}</h2>
+  {% endunless %}
+
+    {% unless CATEGORY == link.category.id %}
+    <ol><h3>{{ link.category.name }}</h3>
+    {% endunless %}
+
+      {% unless PARENT == link.parent_channel.id %}
+      <h4>{{ link.parent_channel.name }}</h4>
+      {% endunless %}
+
+      {% unless CHANNEL == link.channel.id %}
+      <li><h5>{{ link.channel.name }}</h5>
+        <ol>
+      {% endunless %}
+
+          <li>
+            <a href="{{ link.url }}" rel="noreferrer nofollow">{{ link.content }}</a>
+            <textarea readonly>{{ link | jsonify }}</textarea>
+          </li>
+
+      {% unless PARENT == link.parent_channel.id %}
+      {% assign PARENT  = link.parent_channel.id %}
+      {% endunless %}
+
+      {% unless CHANNEL == link.channel.id %}
+      {% assign CHANNEL  = link.channel.id %}
+        </ol>
+      </li>
+      {% endunless %}
+
+    {% unless CATEGORY == link.category.id %}
+    {% assign CATEGORY  = link.category.id %}
+    </ol>
+    {% endunless %}
+
+  {% unless GUILD == link.guild.id %}
+  {% assign GUILD = link.guild.id %}
+  </section>
+  {% endunless %}
+  {{ link.url }}
+
+  {% endfor %}
+  {% endfor %}
+  {% endfor %}
+  {% endfor %}
+</body>
+</html>
