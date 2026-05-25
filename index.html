@@ -29,42 +29,7 @@ title: Index
   {% for category in guild[1] %}
   {% for link in category[1].refs.links %}
 
-  {% unless GUILD == link.guild.id %}
-  {% if GUILD %}</div>{% endif %}
-  <div>
-    <h2><span data-icon>⌂</span><span>{{ link.guild.name }}</span></h2>
-  {% endunless %}
-
-  {% unless CATEGORY == link.category.id %}
-  {% if CATEGORY %}</ul>{% endif %}
-  <ul><h3><span data-icon>›</span><span>{{ link.category.name }}</span></h3>
-  {% endunless %}
-
-  {% unless PARENT == link.parent_channel.id %}
-  {% if CHANNEL %}</ol></li>{% endif %}
-  <li data-channel-type="{{ link.channel.type }}">
-    {% if link.parent_channel.id %}
-      <code data-forum><pre>{{ link.parent_channel.name }}</pre></code>
-    {% else %}
-      <code data-text><pre>{{ link.channel.name }}</pre></code>
-    {% endif %}
-  </span>
-  <ol>
-  {% endunless %}
-
-  <li data-platform="{{ link.platform }}"
-    data-continue="{{ PARENT == link.parent_channel.id }}"
-  >
-    <a href="{{ link.url | clean_url }}">
-      <code>{{ link.label | clean_title }}</code>
-      <!-- <a href="{{ link.deep_link }}" data-icon data-deeplink title="View in Discord"></a> -->
-      {% if link.embed %}
-        <img data-cover src="{{ link.embed.thumbnail_url }}" />
-      {% else %}{% if link.attachment %}
-        <img data-cover src="" />
-      {% endif %}{% endif %}
-    </a>
-  </li>
+  {% include guilds.html %}
 
   {% assign CHANNEL = link.channel.id %}
   {% assign PARENT = link.parent_channel.id %}

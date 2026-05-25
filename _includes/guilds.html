@@ -1,0 +1,22 @@
+{% unless GUILD == link.guild.id %}
+{% if GUILD %}</div>{% endif %}
+<div hidden data-guild-id="{{ link.guild.id }}">
+  <h2><img class="logo" data-round-square data-icon></img><span>{{ link.guild.name }}</span></h2>
+{% endunless %}
+
+{% unless CATEGORY == link.category.id %}
+{% if CATEGORY %}</ul>{% endif %}
+<h3 data-author-id="{{ link.message.author_id }}">{{-}}
+  <span data-icon>›</span>{{-}}
+  <span>{{ link.category.name }}</span>
+  <div class="locker-controls">
+    <input type="radio" name="view-{{ link.category.id }}" id="view-expanded-{{ link.category.id }}" value="expanded" checked hidden>
+    <input type="radio" name="view-{{ link.category.id }}" id="view-collapsed-{{ link.category.id }}" value="collapsed" hidden>
+    <label data-round for="view-expanded-{{ link.category.id }}">#</label>
+    <label data-round for="view-collapsed-{{ link.category.id }}">⋯</label>
+  </div>
+</h3>
+<ul data-author-id="{{ link.message.author_id }}">
+{% endunless %}
+
+{% include locker.html %}
