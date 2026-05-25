@@ -4,7 +4,7 @@ from typing import AsyncIterator, Optional
 
 import discord
 
-from models import FoundLink
+from models import FoundLink, MediaHit
 
 logger = logging.getLogger(__name__)
 
@@ -30,37 +30,55 @@ def _detect_platform(url: str) -> Optional[str]:
     return None
 
 
-def _extract_urls(text: str) -> list[str]:
-    return COMBINED_PATTERN.findall(text)
+def _extract_urls(text: str) -> list[MediaHit]:
+    """Extract URL hits from message text content as MediaHit objects."""
+    return [
+        MediaHit(url=url, platform=_detect_platform(url) or "unknown", source_type="url")
+        for url in COMBINED_PATTERN.findall(text)
+    ]
 
 
-def _extract_media(message: discord.Message) -> list[tuple[str, str]]:
+def _extract_media(message: discord.Message) -> list[MediaHit]:
     """
-    Extract (url, platform) pairs from message attachments and embeds.
-    Attachments: audio/* or video/* MIME types — platform is "discord_cdn".
+    Extract MediaHit objects from message attachments and embeds.
+    Attachments: audio/* or video/* MIME types.
     Embeds: any embed with a video field, or whose URL matches a known domain.
-    Returns a flat list parallel to what _extract_urls produces for text content.
     """
-    hits: list[tuple[str, str]] = []
+    hits: list[MediaHit] = []
 
     for attachment in message.attachments:
         ct = attachment.content_type or ""
         if ct.startswith(MEDIA_MIME_PREFIXES):
-            hits.append((attachment.url, "discord_cdn"))
+            hits.append(MediaHit(
+                url=attachment.url,
+                platform="discord_cdn",
+                source_type="attachment",
+                attachment_filename=attachment.filename,
+                attachment_content_type=ct,
+                attachment_size=attachment.size,
+                attachment_width=getattr(attachment, "width", None),
+                attachment_height=getattr(attachment, "height", None),
+            ))
 
     for embed in message.embeds:
         url = embed.url or ""
-        # Prefer embed.video.url for richer provider embeds (YouTube etc.)
         if embed.video and embed.video.url:
             url = embed.video.url
         if not url:
             continue
-        platform = _detect_platform(url)
-        if platform:
-            hits.append((url, platform))
-        elif embed.video:
-            # Has video but unknown domain — still worth capturing
-            hits.append((url, "embed"))
+        platform = _detect_platform(url) or ("embed" if embed.video else None)
+        if not platform:
+            continue
+        hits.append(MediaHit(
+            url=url,
+            platform=platform,
+            source_type="embed",
+            embed_title=embed.title or None,
+            embed_description=embed.description or None,
+            embed_provider=embed.provider.name if embed.provider else None,
+            embed_author=embed.author.name if embed.author else None,
+            embed_thumbnail_url=embed.thumbnail.url if embed.thumbnail else None,
+        ))
 
     return hits
 
@@ -74,24 +92,20 @@ def _channel_type_label(channel: discord.abc.GuildChannel | discord.Thread) -> s
 
 
 def _build_found_link(
-    url: str,
+    hit: MediaHit,
     message: discord.Message,
     channel: discord.abc.GuildChannel | discord.Thread,
     parent: Optional[discord.abc.GuildChannel] = None,
-    platform: Optional[str] = None,
-) -> Optional[FoundLink]:
-    platform = platform or _detect_platform(url)
-    if not platform:
-        return None
-
+) -> FoundLink:
     guild = message.guild
     category = getattr(channel, "category", None) or (
         getattr(parent, "category", None) if parent else None
     )
 
     return FoundLink(
-        url=url,
-        platform=platform,
+        url=hit.url,
+        platform=hit.platform,
+        source_type=hit.source_type,
         message_id=message.id,
         message_content=message.content,
         message_timestamp=message.created_at,
@@ -106,6 +120,16 @@ def _build_found_link(
         category_name=category.name if category else None,
         guild_id=guild.id if guild else 0,
         guild_name=guild.name if guild else "",
+        embed_title=hit.embed_title,
+        embed_description=hit.embed_description,
+        embed_provider=hit.embed_provider,
+        embed_author=hit.embed_author,
+        embed_thumbnail_url=hit.embed_thumbnail_url,
+        attachment_filename=hit.attachment_filename,
+        attachment_content_type=hit.attachment_content_type,
+        attachment_size=hit.attachment_size,
+        attachment_width=hit.attachment_width,
+        attachment_height=hit.attachment_height,
     )
 
 
@@ -142,22 +166,18 @@ async def scan_messages(
         async for message in channel.history(
             limit=None, oldest_first=True, after=after
         ):
-            # Gather hits from text content and embeds/attachments
-            # url_hits: list[tuple[str, Optional[str]]] = [
-            #     (url, None) for url in (_extract_urls(message.content) if message.content else [])
-            # ]
-            media_hits: list[tuple[str, Optional[str]]] = _extract_media(message)
-            # all_hits = url_hits + media_hits
-            all_hits = media_hits
+            # Gather hits from text content and embeds/attachments in parallel
+            all_hits: list[MediaHit] = (
+                (_extract_urls(message.content) if message.content else [])
+                + _extract_media(message)
+            )
 
             if all_hits:
-                for url, platform in all_hits:
-                    link = _build_found_link(url, message, source_channel, parent, platform=platform)
-                    if link:
-                        yield link, message.id
-
-            # Always advance cursor
-            yield None, message.id
+                for hit in all_hits:
+                    yield _build_found_link(hit, message, source_channel, parent), message.id
+                yield None, message.id
+            else:
+                yield None, message.id
     except discord.Forbidden:
         logger.warning("No permission to read %s", getattr(source_channel, "name", source_channel))
     except discord.HTTPException as e:

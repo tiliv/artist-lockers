@@ -1,5 +1,11 @@
+@font-face {
+  font-family: Tiny;
+  src: url('../font/advanced_pixel-7.ttf') format('truetype');
+}
+
 body {
-  color: oklab(81.719% 0 -0.00009);
+  --text-color: oklab(81.719% 0 -0.00009);
+  color: var(--text-color);
   margin: 0;
   padding: 0;
 }
@@ -28,22 +34,43 @@ ul > li::before, [data-icon] {
   text-align: center;
   vertical-align: middle;
 }
-[data-platform="discord_cdn"] { --platform-icon: url("../img/discord.png"); }
-[data-platform="udio"] { --platform-icon: url("../img/udio.png"); }
-[data-platform="suno"] { --platform-icon: url("../img/suno.png"); }
-[data-platform="youtube"] { --platform-icon: url("../img/youtube.png"); }
-[data-platform="spotify"] { --platform-icon: url("../img/spotify.png"); }
-[data-platform="applemusic"] { --platform-icon: url("../img/applemusic.png"); }
-[data-platform] > [data-icon="platform"] {
-  height: 2rem;
-  background-image: var(--platform-icon);
-  background-position: center center;
-  background-size: 100% 100%;
+[data-platform] {
+  /* &[data-channel-type="forum_post"] { --glyph: "•" }
+  &[data-channel-type="text"] { --glyph: "#" } */
+  /* &[data-continue=""] {} */
+
+  &[data-platform="discord_cdn"] { --platform-icon: url("../img/discord.png"); }
+  &[data-platform="udio"] { --platform-icon: url("../img/udio.png"); }
+  &[data-platform="suno"] { --platform-icon: url("../img/suno.png"); }
+  &[data-platform="youtube"] { --platform-icon: url("../img/youtube.png"); }
+  &[data-platform="spotify"] { --platform-icon: url("../img/spotify.png"); }
+  &[data-platform="applemusic"] { --platform-icon: url("../img/applemusic.png"); }
+
+  > [data-icon="platform"] {
+    height: 2rem;
+    background-image: var(--platform-icon);
+    background-position: center center;
+    background-size: 100% 100%;
+  }
+  > [data-deeplink] {
+    /* &::before { content: var(--glyph); } */
+    /* &:not(:hover) { text-decoration: none; color: inherit; } */
+  }
 }
-a[data-icon]:not(:hover) {
-  text-decoration: none;
-  color: inherit;
+
+code {
+  display: inline-block;
+
+  &[data-forum] { color: oklab(56.745% 0.20547 -0.03033) }
+  &[data-thread] { color: oklab(56.577% 0.18672 -0.15171) }
+  &[data-text] { color: oklab(66.966% 0.04838 0.12171) }
+
+  > pre {
+    font-family: courier;
+    margin: 0;
+  }
 }
+
 
 ul /* Channels */ {
   padding: 0;
@@ -52,30 +79,52 @@ ul /* Channels */ {
   > li {
     list-style: none;
 
+    &[data-channel-type="text"]::before { content: "#" }
+    &[data-channel-type="forum_post"]::before { content: "•" }
+
     > span {
       vertical-align: middle;
       font-weight: bold;
       font-size: 1.2em;
     }
   }
-  > li::before {
-    content: "#";
-  }
-  > li[data-channel-type="forum_post"]::before {
-    content: "💬";
-  }
 }
 
 ol /* Messages */ {
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: row;
 
   > li {
+    display: flex;
     list-style: none;
-    /* padding: 0.2rem 1rem; */
+    padding: 0;
 
-    > p {
-      margin: 0;
+    --cover-size: 10rem;
+    width: var(--cover-size);
+    height: var(--cover-size);
+
+    > a {
+      width: var(--cover-size);
+      overflow: hidden;
+      > code {
+        position: absolute;
+        z-index: 5;
+        color: var(--text-color);
+        background: black;
+        font-family: Tiny;
+        letter-spacing: .5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      > [data-cover] {
+        width: var(--cover-size);
+        height: var(--cover-size);
+        object-fit: cover;
+        object-position: center;
+      }
     }
   }
 }

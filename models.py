@@ -1,6 +1,29 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
+
+
+@dataclass
+class MediaHit:
+    """Uniform carrier for a media hit regardless of source (url/embed/attachment)."""
+
+    url: str
+    platform: str
+    source_type: str  # "url" | "embed" | "attachment"
+
+    # Embed metadata
+    embed_title: Optional[str] = None
+    embed_description: Optional[str] = None
+    embed_provider: Optional[str] = None
+    embed_author: Optional[str] = None
+    embed_thumbnail_url: Optional[str] = None
+
+    # Attachment metadata
+    attachment_filename: Optional[str] = None
+    attachment_content_type: Optional[str] = None
+    attachment_size: Optional[int] = None
+    attachment_width: Optional[int] = None
+    attachment_height: Optional[int] = None
 
 
 @dataclass
@@ -9,7 +32,8 @@ class FoundLink:
 
     # The link itself
     url: str
-    platform: str  # "suno" | "udio"
+    platform: str
+    source_type: str  # "url" | "embed" | "attachment"
 
     # Message context
     message_id: int
@@ -33,15 +57,43 @@ class FoundLink:
     guild_id: int = 0
     guild_name: str = ""
 
+    # Embed metadata
+    embed_title: Optional[str] = None
+    embed_description: Optional[str] = None
+    embed_provider: Optional[str] = None
+    embed_author: Optional[str] = None
+    embed_thumbnail_url: Optional[str] = None
+
+    # Attachment metadata
+    attachment_filename: Optional[str] = None
+    attachment_content_type: Optional[str] = None
+    attachment_size: Optional[int] = None
+    attachment_width: Optional[int] = None
+    attachment_height: Optional[int] = None
+
     @property
     def deep_link(self) -> str:
         """Discord web deep link to the exact message."""
-        return f"https://discord.com/channels/{self.guild_id}/{self.channel_id}/{self.message_id}"
+        return (
+            "https://discord.com/channels/"
+            f"{self.guild_id}/{self.channel_id}/{self.message_id}"
+        )
+
+    @property
+    def label(self) -> str:
+        """Best available human-readable label for this hit."""
+        return (
+            self.embed_title
+            or self.attachment_filename
+            or self.url
+        )
 
     def to_dict(self) -> dict:
         return {
             "url": self.url,
             "platform": self.platform,
+            "source_type": self.source_type,
+            "label": self.label,
             "deep_link": self.deep_link,
             "message": {
                 "id": str(self.message_id),
@@ -67,4 +119,18 @@ class FoundLink:
                 "id": str(self.guild_id),
                 "name": self.guild_name,
             },
+            "embed": {
+                "title": self.embed_title,
+                "description": self.embed_description,
+                "provider": self.embed_provider,
+                "author": self.embed_author,
+                "thumbnail_url": self.embed_thumbnail_url,
+            } if self.source_type == "embed" else None,
+            "attachment": {
+                "filename": self.attachment_filename,
+                "content_type": self.attachment_content_type,
+                "size": self.attachment_size,
+                "width": self.attachment_width,
+                "height": self.attachment_height,
+            } if self.source_type == "attachment" else None,
         }
