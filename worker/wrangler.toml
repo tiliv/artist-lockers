@@ -1,0 +1,7 @@
+name = "discord-auth"
+main = "discord-auth.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+CLIENT_ID = "1507591839664832623"
+REDIRECT_URI = "https://yourdomain.com/auth/callback"

@@ -21,6 +21,7 @@ exclude:
   - Gemfile
   - vendor
   - bin
+  - worker
   - ".*"
   - "*.py"
   - "*.toml"
