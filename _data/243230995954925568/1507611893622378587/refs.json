@@ -1,10 +1,12 @@
 {
-  "exported_at": "2026-05-23T19:37:01.104366+00:00",
-  "total_links": 5,
+  "exported_at": "2026-05-24T01:34:20.667106+00:00",
+  "total_links": 6,
   "links": [
     {
-      "url": "https://cdn.discordapp.com/attachments/1507611940648910938/1507676702254567434/2-3.mp3?ex=6a12c4d9&is=6a117359&hm=f0b677fe5044ad74946e18e9168793b921d038815e1d49530603a5cd8b86d9a6&",
+      "url": "https://cdn.discordapp.com/attachments/1507611940648910938/1507676702254567434/2-3.mp3?ex=6a136d99&is=6a121c19&hm=31e082c716ae7c2c9c4e8e175a76a4ddb0d60fd1260786b9ae305a2025f84d75&",
       "platform": "discord_cdn",
+      "source_type": "attachment",
+      "label": "2-3.mp3",
       "deep_link": "https://discord.com/channels/243230995954925568/1507611940648910938/1507676702099111996",
       "message": {
         "id": "1507676702099111996",
@@ -29,11 +31,21 @@
       "guild": {
         "id": "243230995954925568",
         "name": "Test"
+      },
+      "embed": null,
+      "attachment": {
+        "filename": "2-3.mp3",
+        "content_type": "audio/mpeg",
+        "size": 6189802,
+        "width": null,
+        "height": null
       }
     },
     {
       "url": "https://www.udio.com/songs/bkTZvRXiFSNLu6BzST2Lkw",
       "platform": "udio",
+      "source_type": "embed",
+      "label": "Autuonomy - Your Body: Exit [draft 1] | Udio",
       "deep_link": "https://discord.com/channels/243230995954925568/1507611940648910938/1507677012213502083",
       "message": {
         "id": "1507677012213502083",
@@ -58,11 +70,21 @@
       "guild": {
         "id": "243230995954925568",
         "name": "Test"
-      }
+      },
+      "embed": {
+        "title": "Autuonomy - Your Body: Exit [draft 1] | Udio",
+        "description": "Listen to Your Body: Exit [draft 1] by Autuonomy on Udio. Discover, create, and share music with the world. Use the latest technology to create AI music in seconds.",
+        "provider": null,
+        "author": null,
+        "thumbnail_url": "https://imagedelivery.net/C9yUr1FL21Q6JwfYYh2ozQ/aee36986-d419-4353-7b38-545964cf2500/public"
+      },
+      "attachment": null
     },
     {
       "url": "https://www.youtube.com/embed/aaTpYIb4mcs",
       "platform": "youtube",
+      "source_type": "embed",
+      "label": "BITFLIP",
       "deep_link": "https://discord.com/channels/243230995954925568/1507611940648910938/1507819507702300824",
       "message": {
         "id": "1507819507702300824",
@@ -87,11 +109,21 @@
       "guild": {
         "id": "243230995954925568",
         "name": "Test"
-      }
+      },
+      "embed": {
+        "title": "BITFLIP",
+        "description": "Hey millennial. Run for local office, you absolute idiot.\n\n00:00 We Can Still Win\n03:47 Don't Bite The Sun\n09:56 Mad Is A Method\n14:26 Game Genie\n\nTake me back\nto the days (uh uh)\nwhen we still thought there were ways\nCaptain Planet stops climate change\n\nWe got our\nshit pushed in (uh! uh!)\nby robot master mega men\nParty with our pox chicken\n\nLig...",
+        "provider": "YouTube",
+        "author": "Autumn Valenta",
+        "thumbnail_url": "https://i.ytimg.com/vi/aaTpYIb4mcs/maxresdefault.jpg"
+      },
+      "attachment": null
     },
     {
       "url": "https://www.udio.com/songs/bkTZvRXiFSNLu6BzST2Lkw",
       "platform": "udio",
+      "source_type": "embed",
+      "label": "Autuonomy - Your Body: Exit [draft 1] | Udio",
       "deep_link": "https://discord.com/channels/243230995954925568/1507612124317483139/1507612124317483139",
       "message": {
         "id": "1507612124317483139",
@@ -116,11 +148,21 @@
       "guild": {
         "id": "243230995954925568",
         "name": "Test"
-      }
+      },
+      "embed": {
+        "title": "Autuonomy - Your Body: Exit [draft 1] | Udio",
+        "description": "Listen to Your Body: Exit [draft 1] by Autuonomy on Udio. Discover, create, and share music with the world. Use the latest technology to create AI music in seconds.",
+        "provider": null,
+        "author": null,
+        "thumbnail_url": "https://imagedelivery.net/C9yUr1FL21Q6JwfYYh2ozQ/aee36986-d419-4353-7b38-545964cf2500/public"
+      },
+      "attachment": null
     },
     {
       "url": "https://cdn.discordapp.com/attachments/1507612124317483139/1507612526190530590/1-2.mp3?ex=6a1331d4&is=6a11e054&hm=56878b83e598e7e2d682d931bda62d94a48c6d869b7cc61db51aae8c3bcd9269&",
       "platform": "discord_cdn",
+      "source_type": "attachment",
+      "label": "1-2.mp3",
       "deep_link": "https://discord.com/channels/243230995954925568/1507612124317483139/1507612526077022209",
       "message": {
         "id": "1507612526077022209",
@@ -145,7 +187,54 @@
       "guild": {
         "id": "243230995954925568",
         "name": "Test"
+      },
+      "embed": null,
+      "attachment": {
+        "filename": "1-2.mp3",
+        "content_type": "audio/mpeg",
+        "size": 3927274,
+        "width": null,
+        "height": null
       }
+    },
+    {
+      "url": "https://suno.com/song/4ba79df8-fd2b-45d5-be6d-ae65050ed505",
+      "platform": "suno",
+      "source_type": "embed",
+      "label": "Planetsong: Unknown (F2)",
+      "deep_link": "https://discord.com/channels/243230995954925568/1507919596517064816/1507919596517064816",
+      "message": {
+        "id": "1507919596517064816",
+        "content": "https://suno.com/song/4ba79df8-fd2b-45d5-be6d-ae65050ed505",
+        "timestamp": "2026-05-24T01:34:07.601000+00:00",
+        "author_id": "106584132900941824",
+        "author_name": "thenautumn"
+      },
+      "channel": {
+        "id": "1507919596517064816",
+        "name": "a suno thing",
+        "type": "forum_post"
+      },
+      "parent_channel": {
+        "id": "1507611981371277373",
+        "name": "forum-example"
+      },
+      "category": {
+        "id": "1507611893622378587",
+        "name": "Autumn's Locker"
+      },
+      "guild": {
+        "id": "243230995954925568",
+        "name": "Test"
+      },
+      "embed": {
+        "title": "Planetsong: Unknown (F2)",
+        "description": "Listen and make your own on Suno.",
+        "provider": "Suno",
+        "author": null,
+        "thumbnail_url": "https://cdn2.suno.ai/image_large_4ba79df8-fd2b-45d5-be6d-ae65050ed505.jpeg"
+      },
+      "attachment": null
     }
   ]
 }
