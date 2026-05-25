@@ -1,0 +1,7 @@
+#!/bin/bash
+
+gem install bundler
+bundle install
+
+npm -g i wrangler
+wrangler login

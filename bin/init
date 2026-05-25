@@ -1,4 +1,2 @@
 #!/bin/bash
-gem install bundler
-bundle install
 uv run bin/cli.py sync "$1" --init
