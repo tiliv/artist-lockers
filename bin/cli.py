@@ -88,6 +88,13 @@ def main() -> None:
         help="Create or update bookmark stubs for categories matching regex, no scanning",
     )
 
+    refresh_parser = subparsers.add_parser("refresh", help="Refresh expiring Discord CDN attachment URLs")
+    refresh_parser.add_argument(
+        "--within",
+        metavar="HOURS",
+        type=float,
+        default=24.0,
+        help="Refresh URLs expiring within this many hours (default: 24)",
     )
 
     args = parser.parse_args()
@@ -107,6 +114,8 @@ def main() -> None:
         task = lambda c: run_init(c, pattern)
     elif args.command == "sync":
         task = run_sync
+    elif args.command == "refresh":
+        task = lambda c: refresh.run_refresh(c, args.within * 3600)
 
     async def runner():
         async with client:
