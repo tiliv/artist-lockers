@@ -17,9 +17,11 @@ title: Index
   <meta property="og:locale" content="en_US">
 
   <link rel="stylesheet" href="css/site.css" />
-
+  <script type="module" src="js/unlocker.js"></script>
 </head>
 <body>
+  {% include auth.html %}
+
   {% assign GUILD = "" %}
   {% assign CATEGORY = "" %}
   {% assign PARENT = "" %}

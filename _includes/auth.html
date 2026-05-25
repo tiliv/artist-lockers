@@ -1,0 +1,11 @@
+<aside id="auth-gate" style="display:flex;flex-direction:column;align-items:center;gap:1rem;padding:3rem 1rem">
+  <p>sign in to see your lockers</p>
+    <button id="login-btn" onclick="login()">sign in with Discord</button>
+  <p id="auth-error" style="display:none;color:red"></p>
+</aside>
+
+<aside id="auth-user" hidden>
+  <img id="auth-avatar" data-round data-icon>
+  <span id="auth-username"></span>
+  <button onclick="logout(); location.reload()" style="margin-left: auto">sign out</button>
+</aside>

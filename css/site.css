@@ -19,13 +19,25 @@ h1, h2, h3, h4, h5, h6 {
     vertical-align: middle;
   }
 }
+[data-round] {
+  border-radius: 50%;
+}
+[data-round-square] {
+  border-radius: 25%;
+}
 
-html > body { background-color: oklab(35.618% 0 -0.00004); }
- div > ul   { background-color: oklab(28.908% 0 -0.00003); }
-  ul > li   { background-color: oklab(22.213% 0 -0.00003); }
-  ol > li   { background-color: oklab(19.573% 0 -0.00002); }
+#auth-user,
+html > body { background-color: oklab(40% 0 0); }
+body > div  { background-color: oklab(35% 0 0); }
+ div > h3   { background-color: oklab(30% 0 0); }
+  ul > li   { background-color: oklab(25% 0 0); }
+  /* li > ol   { background-color: oklab(20% 0 0); } */
 
-ul > li::before, [data-icon] {
+#auth-user {
+  align-items: center;
+}
+
+/*ul > li::before,*/ [data-icon] {
   display: inline-block;
   font-size: 2rem;
   font-weight: bold;
@@ -33,6 +45,7 @@ ul > li::before, [data-icon] {
   height: 2rem;
   text-align: center;
   vertical-align: middle;
+  margin: 10px;
 }
 [data-platform] {
   /* &[data-channel-type="forum_post"] { --glyph: "•" }
@@ -90,11 +103,13 @@ ul /* Channels */ {
   }
 }
 
-ol /* Messages */ {
+ul /* Messages */ {
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: row;
+
+  [data-bar] { display: none; }
 
   > li {
     display: flex;
@@ -127,4 +142,44 @@ ol /* Messages */ {
       }
     }
   }
+}
+
+h3[data-author-id] {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  &:has([id^="view-expanded-"]:checked) + ul {
+    flex-wrap: wrap;
+
+    > [data-bar] {
+      display: flex;
+      width: 100%;
+    }
+    > li {
+      order: 0 !important;
+    }
+  }
+}
+.locker-controls {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  margin-left: auto;
+  background-color: #131313;
+  border-radius: 32px;
+
+  label {
+    width: 32px;
+    height: 32px;
+    place-content: center;
+    text-align: center;
+    border: 1px solid transparent;
+  }
+}
+[id^="view-expanded-"]:checked ~ label[for^="view-expanded-"],
+[id^="view-collapsed-"]:checked ~ label[for^="view-collapsed-"] {
+  color: black;
+  background-color: var(--text-color);
+  border-color: white;
 }
