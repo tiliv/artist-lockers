@@ -4,6 +4,7 @@ from typing import AsyncIterator, Optional
 
 import discord
 
+import bookmarks
 from models import FoundLink, MediaHit
 
 logger = logging.getLogger(__name__)
@@ -150,34 +151,37 @@ def _has_new_messages(
     return last > cursor
 
 
+def process_message(
+    message: discord.Message,
+    source_channel: discord.abc.GuildChannel | discord.Thread,
+    parent: Optional[discord.abc.GuildChannel] = None,
+) -> list[FoundLink]:
+    """Extract all FoundLinks from a single message. Empty list if none."""
+    all_hits: list[MediaHit] = (
+        (_extract_urls(message.content) if message.content else [])
+        + _extract_media(message)
+    )
+    return [
+        _build_found_link(hit, message, source_channel, parent)
+        for hit in all_hits
+    ]
+
+
 async def scan_messages(
     channel: discord.abc.Messageable,
     source_channel: discord.abc.GuildChannel | discord.Thread,
     cursor: Optional[int] = None,
     parent: Optional[discord.abc.GuildChannel] = None,
 ) -> AsyncIterator[tuple[FoundLink, int]]:
-    """
-    Yield (FoundLink, message_id) tuples from messages after the cursor.
-    Yields the message_id even for messages with no links, so the caller
-    can advance the bookmark cursor to the true last-seen position.
-    """
     after = discord.Object(id=cursor) if cursor is not None else None
     try:
         async for message in channel.history(
             limit=None, oldest_first=True, after=after
         ):
-            # Gather hits from text content and embeds/attachments in parallel
-            all_hits: list[MediaHit] = (
-                (_extract_urls(message.content) if message.content else [])
-                + _extract_media(message)
-            )
-
-            if all_hits:
-                for hit in all_hits:
-                    yield _build_found_link(hit, message, source_channel, parent), message.id
-                yield None, message.id
-            else:
-                yield None, message.id
+            links = process_message(message, source_channel, parent)
+            for link in links:
+                yield link, message.id
+            yield None, message.id
     except discord.Forbidden:
         logger.warning("No permission to read %s", getattr(source_channel, "name", source_channel))
     except discord.HTTPException as e:
@@ -280,3 +284,36 @@ async def scan_category(
                 yield link
         else:
             logger.debug("  Skipping unsupported channel type: %s", type(channel).__name__)
+
+
+async def sync_guild(
+    guild: discord.Guild,
+) -> tuple[list[FoundLink], Path]:
+    """Scan all tracked categories for a guild. Returns links found and bookmark path."""
+    tracked = dict(bookmarks.all_tracked(guild.id))
+    if not tracked:
+        logger.warning("No tracked categories for guild '%s'", guild.name)
+        return [], None
+
+    found_links = []
+
+    for category in guild.categories:
+        if category.id not in tracked:
+            continue
+
+        bookmark = tracked[category.id]
+
+        def set_cursor(channel_id: int, message_id: int) -> None:
+            bookmarks.set_cursor(bookmark, channel_id, message_id)
+            key = str(channel_id)
+            if key not in bookmark["channels"]:
+                bookmark["channels"][key] = None
+
+        async for link in scan_category(category, bookmark, set_cursor):
+            found_links.append(link)
+            logger.debug("Found %s in #%s: %s", link.platform, link.channel_name, link.url)
+
+        bookmarks.touch_sync(bookmark)
+
+    path = bookmarks.flush(guild.id)
+    return found_links, path

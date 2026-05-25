@@ -1,2 +1,2 @@
 #!/bin/bash
-uv run bin/cli.py sync "$1"
+uv run bin/cli.py sync

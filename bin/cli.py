@@ -3,14 +3,13 @@
 CLI entry point for the Discord media bot.
 
 Usage:
-    uv run bot sync "Category Regex$"         # scan all matching categories, update bookmarks
-    uv run bot sync "Category Regex$" --init  # create/merge bookmark stubs, no scanning
+    uv run bot sync                           # scan all tracked categories
+    uv run bot sync --init "Category Regex$"  # create/merge bookmark stubs
 """
 
 import argparse
 import asyncio
 import logging
-import os
 import re
 import sys
 from pathlib import Path
@@ -23,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import bootstrap; bootstrap.load_env()
 import bookmarks
 import exporter
+import refresh
 import scanner
 
 logger = logging.getLogger(__name__)
@@ -56,54 +56,20 @@ async def run_init(client: discord.Client, pattern: re.Pattern) -> None:
         await client.close()
 
 
-async def run_sync(client: discord.Client, pattern: re.Pattern) -> None:
+async def run_sync(client: discord.Client) -> None:
     await client.wait_until_ready()
     try:
         for guild in client.guilds:
-            for category in match_categories(guild, pattern):
-                bookmark = bookmarks.load(guild.id, category.id)
-                if bookmark is None:
-                    logger.error(
-                        "No bookmark found for '%s' (id: %d). Run with --init first.",
-                        category.name,
-                        category.id,
-                    )
-                    continue
-
-                found_links = []
-
-                def set_cursor(channel_id: int, message_id: int) -> None:
-                    bookmarks.set_cursor(bookmark, channel_id, message_id)
-                    # Also register previously-unseen threads lazily
-                    key = str(channel_id)
-                    if key not in bookmark["channels"]:
-                        bookmark["channels"][key] = None
-
-                async for link in scanner.scan_category(category, bookmark, set_cursor):
-                    found_links.append(link)
-                    logger.debug(
-                        "Found %s link in #%s: %s",
-                        link.platform,
-                        link.channel_name,
-                        link.url,
-                    )
-
-                bookmarks.touch_sync(bookmark)
-                path = bookmarks.save(guild.id, bookmark)
-                logger.info(
-                    "Bookmark updated: %s (%d links found this run)",
-                    path,
-                    len(found_links)
+            found_links, bookmark_path = await scanner.sync_guild(guild)
+            if bookmark_path:
+                logger.info("Bookmarks flushed: %s", bookmark_path)
+            if found_links:
+                export_path = exporter.export_links(
+                    guild.id,
+                    found_links,
+                    output_dir=bootstrap.get_out(),
                 )
-
-                if found_links:
-                    export_path = exporter.export_links(
-                        guild.id,
-                        category.id,
-                        found_links,
-                        output_dir=bootstrap.get_out()
-                    )
-                    logger.info("Export written: %s", export_path)
+                logger.info("Export written: %s (%d links)", export_path, len(found_links))
     finally:
         await client.close()
 
@@ -115,18 +81,13 @@ def main() -> None:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    sync_parser = subparsers.add_parser(
-        "sync",
-        help="Scan categories for media links"
-    )
-    sync_parser.add_argument(
-        "pattern",
-        help="Regex pattern to match category names (e.g. 'Locker$')",
-    )
+    sync_parser = subparsers.add_parser("sync", help="Scan all tracked categories for media links")
     sync_parser.add_argument(
         "--init",
-        action="store_true",
-        help="Create or update bookmark stubs only, no scanning",
+        metavar="PATTERN",
+        help="Create or update bookmark stubs for categories matching regex, no scanning",
+    )
+
     )
 
     args = parser.parse_args()
@@ -137,22 +98,21 @@ def main() -> None:
         logger.error("DISCORD_BOT_TOKEN is not set. Use dotenv machinery.")
         raise
 
-    try:
-        pattern = re.compile(args.pattern)
-    except re.error as e:
-        logger.error("Invalid pattern '%s': %s", args.pattern, e)
-        sys.exit(1)
-
-    client = bootstrap.make_client()
-    task = run_init if args.init else run_sync
+    if args.command == "sync" and args.init:
+        try:
+            pattern = re.compile(args.init)
+        except re.error as e:
+            logger.error("Invalid pattern '%s': %s", args.init, e)
+            sys.exit(1)
+        task = lambda c: run_init(c, pattern)
+    elif args.command == "sync":
+        task = run_sync
 
     async def runner():
         async with client:
-            await asyncio.gather(
-                client.start(token),
-                task(client, pattern),
-            )
+            await asyncio.gather(client.start(token), task(client))
 
+    client = bootstrap.get_client()
     asyncio.run(runner())
 
 

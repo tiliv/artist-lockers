@@ -12,6 +12,8 @@ OUT_DIR = "ARTIFACTS_DIR"
 TOKEN = "DISCORD_BOT_TOKEN"
 EXPECTED_ENV = {OUT_DIR, TOKEN}
 
+_client: discord.Client | None = None
+
 
 def _load_required() -> Generator[str]:
     for k in EXPECTED_ENV:
@@ -42,9 +44,12 @@ def get_token() -> str:
     )
 
 
-def make_client() -> discord.Client:
-    intents = discord.Intents.default()
-    intents.message_content = True
-    intents.guilds = True
-    intents.guild_messages = True
-    return discord.Client(intents=intents)
+def get_client() -> discord.Client:
+    global _client
+    if _client is None:
+        intents = discord.Intents.default()
+        intents.message_content = True
+        intents.guilds = True
+        intents.guild_messages = True
+        _client = discord.Client(intents=intents)
+    return _client

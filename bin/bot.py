@@ -14,12 +14,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import bootstrap
-import watcher
+# import watcher
 
 bootstrap.load_env()
 logger = logging.getLogger(__name__)
-client = bootstrap.make_client()
-watcher.register(client)
+client = bootstrap.get_client()
 
 
 @client.event
