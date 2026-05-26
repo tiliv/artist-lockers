@@ -18,7 +18,7 @@ exclude:
   - README.md
   - Gemfile
   - vendor
-  - app
+  - bot
   - bin
   - worker
   - node_modules
