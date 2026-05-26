@@ -21,6 +21,7 @@ window.addEventListener("auth:needed", ({ detail }) => {
 });
 
 window.addEventListener("auth:ready", ({ detail }) => {
+  window.__auth = detail; // { user, matchedGuilds, token }
   document.getElementById("auth-gate").style.display = "none";
   document.getElementById("auth-user").style.display = "flex";
   document.getElementById("auth-avatar").src = `{{ page.avatar_url }}`;
@@ -35,3 +36,12 @@ window.addEventListener("auth:ready", ({ detail }) => {
     }
   }
 });
+
+function guildAvatarUrl(guildId) {
+  const guild = window.__auth?.matchedGuilds.find(
+    g => String(g.id) === String(guildId)
+  );
+  if (!guild?.icon) return '';
+  const ext = guild.icon.startsWith('a_') ? 'gif' : 'png';
+  return `{{ page.guild_logo }}`;
+}

@@ -14,6 +14,9 @@
 <li
   data-platform="{{ link.platform }}"
   data-continue="{{ PARENT == link.parent_channel.id }}"
+  data-player="{{ link | jsonify | xml_escape }}"
+  data-deeplink="{{ link.deep_link }}"
+  onclick="return openPlayer(this)"
   style="order: {{ link.message.timestamp | date: '%s' | times: -1 }}"
 >
   <a href="{{ link.url | clean_url }}">

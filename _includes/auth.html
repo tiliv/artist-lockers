@@ -6,6 +6,7 @@
 
 <aside id="auth-user" hidden>
   <img id="auth-avatar" data-round data-icon>
-  <span id="auth-username"></span>
+  <span id="auth-username" hidden></span>
+  {% include player.html %}
   <button onclick="logout(); location.reload()" style="margin-left: auto">sign out</button>
 </aside>
