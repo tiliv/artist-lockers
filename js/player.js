@@ -1,3 +1,5 @@
+---
+---
 window.openPlayer = async function openPlayer(source) {
   const record = source instanceof Element
     ? JSON.parse(source.dataset.player)
@@ -40,42 +42,47 @@ window.openPlayer = async function openPlayer(source) {
 }
 
 async function acquireBlob(record) {
-  const key = record.message.id; // stable, no query params
+  const key = record.message.id;
 
   // check OPFS first
   try {
     const root = await navigator.storage.getDirectory();
     const file = await root.getFileHandle(key);
-    const blob = await (await file.getFile()).arrayBuffer();
-    return URL.createObjectURL(new Blob([blob], {
+    const buffer = await (await file.getFile()).arrayBuffer();
+    return URL.createObjectURL(new Blob([buffer], {
       type: record.attachment.content_type,
     }));
   } catch {
-    // not cached, fetch live
+    // not cached
   }
 
-  // fetch from CDN (may be expired — handle that separately)
-  try {
-    const res = await fetch(record.url);
-    if (!res.ok) throw new Error(`fetch failed: ${res.status}`);
-    const buffer = await res.arrayBuffer();
-
-    // persist to OPFS
+  // try IPFS if we have a CID
+  if (record.ipfs_cid) {
     try {
-      const root = await navigator.storage.getDirectory();
-      const file = await root.getFileHandle(key, { create: true });
-      const writable = await file.createWritable();
-      await writable.write(buffer);
-      await writable.close();
+      const res = await fetch(`https://{{ site.pinata_gateway }}/ipfs/${record.ipfs_cid}`);
+      if (!res.ok) throw new Error(`IPFS fetch failed: ${res.status}`);
+      const buffer = await res.arrayBuffer();
+      await writeToOPFS(key, buffer);
+      return URL.createObjectURL(
+        new Blob([buffer], { type: record.attachment.content_type })
+      );
     } catch (e) {
-      console.warn('OPFS write failed:', e);
+      console.warn('IPFS fetch failed, falling back to CDN:', e);
     }
+  }
 
-    return URL.createObjectURL(
-      new Blob([buffer], { type: record.attachment.content_type })
-    );
+  // fall back to CDN direct src, no blob acquisition possible
+  return record.url;
+}
+
+async function writeToOPFS(key, buffer) {
+  try {
+    const root = await navigator.storage.getDirectory();
+    const file = await root.getFileHandle(key, { create: true });
+    const writable = await file.createWritable();
+    await writable.write(buffer);
+    await writable.close();
   } catch (e) {
-    console.error('acquireBlob failed:', e);
-    return null;
+    console.warn('OPFS write failed:', e);
   }
 }
