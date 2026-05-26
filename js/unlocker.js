@@ -4,9 +4,6 @@ guild_logo: "https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.${ext}"
 ---
 import { initAuth, login, logout } from "./discord-auth.js";
 
-window.login = login;
-window.logout = logout;
-
 document.addEventListener("DOMContentLoaded", async () => {
   await initAuth();
 });
@@ -45,3 +42,7 @@ function guildAvatarUrl(guildId) {
   const ext = guild.icon.startsWith('a_') ? 'gif' : 'png';
   return `{{ page.guild_logo }}`;
 }
+
+window.login = login;
+window.logout = logout;
+window.guildAvatarUrl = guildAvatarUrl;
