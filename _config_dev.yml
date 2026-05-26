@@ -1,5 +1,6 @@
-title: Artist Lockers
+title: Artist Lockers (DEV)
 url: http://127.0.0.1:4000
 host: 127.0.0.1
 port: 4000
 oauth_client_id: 1507591839664832623
+pinata_gateway: orange-bitter-aardvark-830.mypinata.cloud
