@@ -30,9 +30,13 @@ def needs_pin(entry: dict) -> bool:
 def fetch_to_temp(url: str) -> str | None:
     """Download a URL to a temp file, return path or None on failure."""
     try:
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        })
         suffix = Path(urllib.parse.urlparse(url).path).suffix
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as f:
-            urllib.request.urlretrieve(url, f.name)
+            with urllib.request.urlopen(req) as response:
+                f.write(response.read())
             return f.name
     except Exception as e:
         logger.error("Fetch failed for %s: %s", url, e)
@@ -42,7 +46,7 @@ def fetch_to_temp(url: str) -> str | None:
 def pin(local_path: str, mime_type: str, name: str) -> str | None:
     """Require synchronous push to IPFS."""
     result = subprocess.run(
-        ["node", "bin/distribute.js", local_path, mime_type, name],
+        ["node", "bin/distribute.mjs", local_path, mime_type, name],
         capture_output=True,
         text=True,
         env=os.environ,
