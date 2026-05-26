@@ -36,8 +36,14 @@ jobs:
           bundler-cache: true
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Write _config_prod.yml
+        run: |
+          cat > _config_prod.yml << EOF
+          title: ${{ vars.SITE_TITLE }}
+          oauth_client_id: ${{ vars.DISCORD_OAUTH_CLIENT_ID }}
+          EOF
       - name: Build with Jekyll
-        run: bundle exec jekyll build --destination _site
+        run: bundle exec jekyll build --config _config.yml,_config_prod.yml
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
