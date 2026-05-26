@@ -10,7 +10,7 @@ import yaml
 
 OUT_DIR = "ARTIFACTS_DIR"
 TOKEN = "DISCORD_BOT_TOKEN"
-EXPECTED_ENV = {OUT_DIR, TOKEN}
+EXPECTED_ENV = {OUT_DIR, TOKEN}  # All of .env will load but these are demanded
 
 _client: discord.Client | None = None
 
@@ -38,10 +38,14 @@ def get_out() -> str:
 def get_token() -> str:
     if token := os.getenv(TOKEN):
         return token
+    _err(TOKEN)
+
+
+def _err(name: str, e: Exception):
     raise RuntimeError(
-        f"{TOKEN} environment variable is not set."
+        f"{name} environment variable is not set."
         " Create a .env file or export the variable before running."
-    )
+    ) from e
 
 
 def get_client() -> discord.Client:
