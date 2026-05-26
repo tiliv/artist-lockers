@@ -160,8 +160,7 @@ async def run_pin(args) -> None:
                 continue
 
             try:
-                cid = decent.pin(local_path, mime_type, name)
-                if cid:
+                if cid := decent.pin(local_path, mime_type, name):
                     entry["ipfs_cid"] = cid
                     total_pinned += 1
                     dirty = True
