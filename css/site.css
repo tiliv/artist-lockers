@@ -36,6 +36,38 @@ body > div  { background-color: oklab(35% 0 0); }
 #auth-user {
   align-items: center;
 }
+#now-playing {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+#np-guild-avatar,
+#np-art {
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+#np-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+#np-audio {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+}
+
+#np-goto {
+  flex-shrink: 0;
+}
 
 /*ul > li::before,*/ [data-icon] {
   display: inline-block;
