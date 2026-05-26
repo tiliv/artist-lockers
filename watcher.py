@@ -5,6 +5,7 @@ import discord
 
 import bootstrap
 import bookmarks
+import exporter
 import scanner
 
 logger = logging.getLogger(__name__)
@@ -70,6 +71,7 @@ async def on_message(message: discord.Message) -> None:
         output_dir=bootstrap.get_out(),
     )
     logger.info("Live export: %s (%d links)", export_path, len(links))
+
 
 def parse_strategy(content: str) -> dict | None:
     """Extract @bot declaration from a thread starter message."""
