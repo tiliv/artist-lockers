@@ -18,17 +18,16 @@ exclude:
   - README.md
   - Gemfile
   - vendor
+  - app
   - bin
   - worker
   - node_modules
   - __pycache__
   - package.json
   - ".*"
-  - "*.py"
   - "*.toml"
   - "*.yaml"
   - "*.lock"
-  - "*.pyc"
 
 external_links:
   enabled: true
