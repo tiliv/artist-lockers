@@ -6,12 +6,16 @@ dist/
 wheels/
 *.egg-info
 
-# Virtual environments
-.venv
 .env
+_config_prod.yml
+
+# Vendor environments
+.venv
 .DS_Store
 .wrangler
 vendor
+node_modules
+yarn.lock
 
 # commit _site if you want to build locally without CI,
 # or if you have nothing to build and it's just real HTML/css/js, etc.
