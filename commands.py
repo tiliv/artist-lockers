@@ -127,7 +127,9 @@ refresh_parser.add_argument(
 )
 
 
-async def run_pin(args) -> None:
+async def run_pin(args, client) -> None:
+    await client.wait_until_ready()
+    await client.close()
     deadline = time.monotonic() + args.budget
     total_pinned = 0
 
