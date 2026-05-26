@@ -1,2 +1,2 @@
 #!/bin/bash
-uv run bin/cli.py sync "Locker" ${@:1}
+bin/daily "Locker"
