@@ -15,7 +15,6 @@ from typing import Optional
 
 import discord
 
-import bootstrap
 import bookmarks
 import cdn
 
@@ -123,14 +122,3 @@ async def refresh_guild(
         total_refreshed += refreshed
 
     return total_refreshed
-
-
-async def run_refresh(client: discord.Client, threshold_seconds: float) -> None:
-    await client.wait_until_ready()
-    output_dir = bootstrap.get_out()
-    try:
-        for guild in client.guilds:
-            count = await refresh_guild(client, guild, threshold_seconds, output_dir)
-            logger.info("Guild '%s': %d attachment URL(s) refreshed", guild.name, count)
-    finally:
-        await client.close()
