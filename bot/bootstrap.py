@@ -22,7 +22,7 @@ def _load_required() -> Generator[str]:
 
 
 def load_env() -> None:
-    with open("logging.yaml") as f:
+    with open("logging.yml") as f:
         logging.config.dictConfig(yaml.safe_load(f))
 
     dotenv.load_dotenv()
