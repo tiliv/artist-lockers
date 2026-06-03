@@ -1,5 +1,13 @@
 ---
 ---
+
+document.addEventListener('click', (event) => {
+  const item = event.target.closest('[data-message-id]');
+  if (!item) return;
+  event.preventDefault();
+  try { openPlayer(item); } catch (_) {}
+});
+
 window.openPlayer = async function openPlayer(source) {
   const record = source instanceof Element
     ? JSON.parse(source.dataset.player)
@@ -23,15 +31,15 @@ window.openPlayer = async function openPlayer(source) {
 
   // stamp guild avatar
   const guildAvatar = document.getElementById('np-guild-avatar');
-  guildAvatar.src = guildAvatarUrl(record.guild.id); // from auth detail
+  guildAvatar.src = guildAvatarUrl(record.guild_id);
 
-  document.getElementById('np-art').src = record.embed?.thumbnail_url || '';
+  document.getElementById('np-art').src = record.cover || '';
   document.getElementById('np-label').textContent = record.label;
 
   // wire goto button to scroll the li into view
   const gotoBtn = document.getElementById('np-goto');
   gotoBtn.onclick = () => {
-    document.querySelector(`li[data-player*="${record.message.id}"]`)
+    document.querySelector(`li[data-message-id="${record.message_id}"]`)
       ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
@@ -42,37 +50,37 @@ window.openPlayer = async function openPlayer(source) {
 }
 
 async function acquireBlob(record) {
-  const key = record.message.id;
+  const key = record.message_id;
 
-  // check OPFS first
+  // check local
   try {
     const root = await navigator.storage.getDirectory();
     const file = await root.getFileHandle(key);
     const buffer = await (await file.getFile()).arrayBuffer();
     return URL.createObjectURL(new Blob([buffer], {
-      type: record.attachment.content_type,
+      type: record.content_type,
     }));
   } catch {
     // not cached
   }
 
-  // try IPFS if we have a CID
-  if (record.ipfs_cid) {
+  // check decentralized
+  if (record.cid) {
     try {
-      const res = await fetch(`https://{{ site.pinata_gateway }}/ipfs/${record.ipfs_cid}`);
+      const res = await fetch(`https://{{ site.pinata_gateway }}/ipfs/${record.cid}`);
       if (!res.ok) throw new Error(`IPFS fetch failed: ${res.status}`);
       const buffer = await res.arrayBuffer();
       await writeToOPFS(key, buffer);
       return URL.createObjectURL(
-        new Blob([buffer], { type: record.attachment.content_type })
+        new Blob([buffer], { type: record.content_type })
       );
     } catch (e) {
       console.warn('IPFS fetch failed, falling back to CDN:', e);
     }
   }
 
-  // fall back to CDN direct src, no blob acquisition possible
-  return record.url;
+  // use discord CDN. this is will not work after the cdn url's expiration
+  return record.cdn;
 }
 
 async function writeToOPFS(key, buffer) {

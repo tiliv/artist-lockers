@@ -1,0 +1,13 @@
+{%- capture slim -%}
+{ {{-}}
+  "guild_id": {{- link.guild.id | jsonify | append: ',' -}}
+  "message_id": {{- link.message.id | jsonify | append: ',' -}}
+  "source_type": {{- link.source_type | jsonify | append: ',' -}}
+  "content_type": {{- link.attachment.content_type | jsonify | append: ',' -}}
+  "cid": {{- link.ipfs_cid | jsonify | append: ',' -}}
+  "cdn": {{- link.url | jsonify | append: ',' -}}
+  "label": {{- label | jsonify | append: ',' -}}
+  "cover": {{- embed.thumbnail_url | jsonify -}}
+}
+{%- endcapture -%}
+{{- slim | strip_newlines -}}
