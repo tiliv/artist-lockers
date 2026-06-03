@@ -3,5 +3,5 @@
 gem install bundler
 bundle install
 
-npm -g i wrangler
-wrangler login
+# npm -g i wrangler
+# wrangler login
