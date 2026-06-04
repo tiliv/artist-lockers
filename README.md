@@ -70,7 +70,8 @@ Discord API
 
 Static site
 : Built by Jekyll
-: Served by GitHub Pages, and Cloudflare in front of it
+: Served by GitHub Pages
+: Cached by Cloudflare
 
 IPFS
 : Provided over HTTP gateway via "Pinata" (sic)
