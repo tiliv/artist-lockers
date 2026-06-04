@@ -48,6 +48,7 @@ body > div  { background-color: oklab(35% 0 0); }
 #auth-user {
   align-items: center;
 }
+
 #now-playing {
   display: flex;
   align-items: center;
@@ -55,46 +56,111 @@ body > div  { background-color: oklab(35% 0 0); }
   flex: 1;
   min-width: 0;
   overflow: hidden;
+
+  [data-guild-avatar], [data-art] {
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+
+  [data-label] {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex-shrink: 1;
+  }
+
+  [data-audio] {
+    flex: 1;
+    min-width: 0;
+    height: 32px;
+  }
+
+  [data-goto] {
+    flex-shrink: 0;
+  }
 }
 
-#np-guild-avatar,
-#np-art {
-  flex-shrink: 0;
-  object-fit: cover;
+[data-guild-id] /* Server */ {
+  h3[data-author-id] {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    &:has([id^="view-expanded-"]:checked) + ul {
+      flex-wrap: wrap;
+
+      > [data-channel-type] {
+        display: flex;
+        width: 100%;
+      }
+      > li {
+        order: 0 !important;
+      }
+    }
+  }
+  .locker-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    margin-left: auto;
+    background-color: #131313;
+    border-radius: 32px;
+
+    label {
+      width: 32px;
+      height: 32px;
+      place-content: center;
+      text-align: center;
+      border: 1px solid transparent;
+    }
+
+    [id^="view-expanded-"]:checked ~ label[for^="view-expanded-"],
+    [id^="view-collapsed-"]:checked ~ label[for^="view-collapsed-"] {
+      color: black;
+      background-color: var(--text-color);
+      border-color: white;
+    }
+  }
 }
 
-#np-label {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-  flex-shrink: 1;
+ul /* Locker */ {
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  margin: 0;
+
+  > [data-channel-type] {
+    display: none;
+
+    &[data-channel-type="forum_post"] { --glyph: "•" }
+    &[data-channel-type="text"] { --glyph: "#" }
+
+    code {
+      display: inline-block;
+
+      &::before { content: var(--glyph); }
+      &[data-forum] { color: oklab(56.745% 0.20547 -0.03033) }
+      &[data-thread] { color: oklab(56.577% 0.18672 -0.15171) }
+      &[data-text] { color: oklab(66.966% 0.04838 0.12171) }
+
+      > pre {
+        display: inline-block;
+        font-family: courier;
+        margin: 0;
+      }
+    }
+  }
 }
 
-#np-audio {
-  flex: 1;
-  min-width: 0;
-  height: 32px;
-}
+li /* Media */ {
+  display: flex;
+  list-style: none;
+  padding: 0;
 
-#np-goto {
-  flex-shrink: 0;
-}
-
-/*ul > li::before,*/ [data-icon] {
-  display: inline-block;
-  font-size: 2rem;
-  font-weight: bold;
-  width: 2rem;
-  height: 2rem;
-  text-align: center;
-  vertical-align: middle;
-  margin: 10px;
-}
-[data-platform] {
-  /* &[data-channel-type="forum_post"] { --glyph: "•" }
-  &[data-channel-type="text"] { --glyph: "#" } */
-  /* &[data-continue=""] {} */
+  --cover-size: 10rem;
+  width: var(--cover-size);
+  height: var(--cover-size);
 
   &[data-platform="discord_cdn"] { --platform-icon: url("../img/discord.png"); }
   &[data-platform="udio"] { --platform-icon: url("../img/udio.png"); }
@@ -102,128 +168,36 @@ body > div  { background-color: oklab(35% 0 0); }
   &[data-platform="youtube"] { --platform-icon: url("../img/youtube.png"); }
   &[data-platform="spotify"] { --platform-icon: url("../img/spotify.png"); }
   &[data-platform="applemusic"] { --platform-icon: url("../img/applemusic.png"); }
+  /* &[data-continue=""] {} */
 
-  > [data-icon="platform"] {
+  /* [data-icon="platform"] {
     height: 2rem;
     background-image: var(--platform-icon);
     background-position: center center;
     background-size: 100% 100%;
-  }
-  > [data-deeplink] {
-    /* &::before { content: var(--glyph); } */
-    /* &:not(:hover) { text-decoration: none; color: inherit; } */
-  }
-}
+  } */
 
-code {
-  display: inline-block;
-
-  &[data-forum] { color: oklab(56.745% 0.20547 -0.03033) }
-  &[data-thread] { color: oklab(56.577% 0.18672 -0.15171) }
-  &[data-text] { color: oklab(66.966% 0.04838 0.12171) }
-
-  > pre {
-    font-family: courier;
-    margin: 0;
-  }
-}
-
-
-ul /* Channels */ {
-  padding: 0;
-  margin: 0;
-
-  > li {
-    list-style: none;
-
-    &[data-channel-type="text"]::before { content: "#" }
-    &[data-channel-type="forum_post"]::before { content: "•" }
-
-    > span {
-      vertical-align: middle;
-      font-weight: bold;
-      font-size: 1.2em;
-    }
-  }
-}
-
-ul /* Messages */ {
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: row;
-
-  [data-bar] { display: none; }
-
-  > li {
-    display: flex;
-    list-style: none;
-    padding: 0;
-
-    --cover-size: 10rem;
+  > a {
     width: var(--cover-size);
-    height: var(--cover-size);
+    overflow: hidden;
 
-    > a {
-      width: var(--cover-size);
+    > code {
+      position: absolute;
+      z-index: 5;
+      color: var(--text-color);
+      background: black;
+      font-family: Tiny;
+      letter-spacing: .5px;
+      white-space: nowrap;
       overflow: hidden;
-      > code {
-        position: absolute;
-        z-index: 5;
-        color: var(--text-color);
-        background: black;
-        font-family: Tiny;
-        letter-spacing: .5px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      > [data-cover] {
-        width: var(--cover-size);
-        height: var(--cover-size);
-        object-fit: cover;
-        object-position: center;
-      }
+      text-overflow: ellipsis;
+    }
+
+    > [data-cover] {
+      width: var(--cover-size);
+      height: var(--cover-size);
+      object-fit: cover;
+      object-position: center;
     }
   }
-}
-
-h3[data-author-id] {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-
-  &:has([id^="view-expanded-"]:checked) + ul {
-    flex-wrap: wrap;
-
-    > [data-bar] {
-      display: flex;
-      width: 100%;
-    }
-    > li {
-      order: 0 !important;
-    }
-  }
-}
-.locker-controls {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  margin-left: auto;
-  background-color: #131313;
-  border-radius: 32px;
-
-  label {
-    width: 32px;
-    height: 32px;
-    place-content: center;
-    text-align: center;
-    border: 1px solid transparent;
-  }
-}
-[id^="view-expanded-"]:checked ~ label[for^="view-expanded-"],
-[id^="view-collapsed-"]:checked ~ label[for^="view-collapsed-"] {
-  color: black;
-  background-color: var(--text-color);
-  border-color: white;
 }
