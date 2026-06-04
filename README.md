@@ -4,59 +4,84 @@ This is a template repository. That means you can use GitHub to copy it
 directly to your account without forking this one. You will be detached from my
 updates, which you should consider a feature! It's yours now. Make it cool.
 
-This repository contains multiple entry points.
+This repository is configured variously by:
+- `.env`: Holds environment variables and sensitive secrets for dotenv loader
+- `bin/setup`: Prepares static site tooling
+- `bin/init`: Discovers channels for the bot to read
 
-## ./bin
+This repository contains multiple entry points:
+- `bin/Locker`: Reads channels in categories
+- `bin/daily "CategorySubstring"`: Reads channels in matching categories
+- `bin/serve`: Runs the Jekyll dev server for inspection
 
-These files compose commands with increasingly high-level abstractions.
+This repository automatically builds and deploys for pushes to branch `main`.
 
-All main tasks are in shell scripts, which eventually call the `bot.py` or
-`cli.py`.
+## About
 
-Primary daily tasks are held in the executable `daily` script, but are in a
-generic form requiring an argument for the regex for matching only valid Discord
-"category" group names when pulling channels.
+This is a bespoke Jekyll site that reads data committed by a discord.py bot.
 
-Excepting `init`, the category-matcher string argument is not required, but
-`daily` includes repeat calls to `init` so that new channels are discovered.
+The bot only needs to turn on long enough to read messages since it's last appearance.
 
-To streamline the base case for a single known server, the esoteric script
-`Locker` will call `daily` with "Locker" as the argument.
+Messages are only processed if they have a media signal: attachments, embeds, or links to supported music domains.
 
-As such, the `Locker` script is runnable without arguments.
+Media-focused information is stored per Category group in a server.
 
-(WIP)
+Messages and media are treated as stable once fetched.
 
-## discord.py bot
+## Engineering philosophy
 
-All bot code is Python and lives in ./bot. There are no entry points here, but
-`commands.py` holds argument parsing for functions exposed by `bin/cli.py`.
+Minimalism
+: Code demonstrates clear signals of intent, without superficial comments
+: Express variables and routines with full but strategically short names
+: Prefer flatter structures to deeply nested ones
+: Reduce outbound queries with aggressive long-lived File or Blob caching
 
-The bot does not need to be running to passively monitor messages, but could at
-some future date. `bot/watcher.py` was a stub no longer in use.
+Self-sufficiency
+: All monolith entry points are offered by `bin/` executables
+: Accumulate offline media caches
+: No frameworks
+: No third-party vendor support loaded by the frontend runtime
+: Leverage modern standards in HTML, CSS, and JS
 
-`./worker` is for if we ever have to switch off of a "public" discord oauth app,
-so that it can mint tokens with a deployed secret. For now, we do not use this.
+## Tooling
 
-## IPFS distributor
+Python
+: Managed by `uv`
+: Versioned by `.python-version`
+: Secrets provided via dotenv
 
-`bin/pin` is a separate entry point that launches a CLI process to download
-attachments that have been accumulated in each server's category's channel set
-("_data/[guildid]/[categoryid]/refs.json"). Any raw attachment without an
-"ipfs_cid" field is considered untracked.
+Ruby
+: Managed by `bundler`
+: Versioned by `.ruby-version`
 
-Via `bin/distribute.mjs`, a file is uploaded to a free Pinata account using
-their latest APIs. The script prints the new CID for that file, and writes it
-back to the relevant `refs.json`.
+Node
+: Managed by `npm`
 
-## Jekyll static site
+CI/CD
+: Performed by GitHub Actions
+: Secrets provided via repository Secrets and Variables
 
-`bin/setup` sets up Ruby bundler and install. `bin/serve` starts the incremental
-Jekyll dev server.
+Deployment
+: Hosted on GitHub Pages
 
-The static site fundamentally depends on the bot's `bin/daily` efforts,
-specifically the json artifacts in `_data/`. Changes to those files must be
-committed so that CI/CD in `.github/workflows/jekyll.yml` can build a site that
-renders references to those baked artifacts.
+Discord API
+: Provided to the bot by discord.py
+: Provided to the static site users by the Discord-authenticated HTTP API
 
-This static result is deployed to GitHub Pages. It can be given a CNAME
+Static site
+: Built by Jekyll
+: Served by GitHub Pages, and Cloudflare in front of it
+
+IPFS
+: Provided over HTTP gateway via "Pinata" (sic)
+
+## Terms
+
+Server
+: a Discord "Guild"
+Locker
+: a Discord "Category" of more channels
+Channel
+: a Discord text-type channel, or a forum_post-type thread
+Author
+: a Discord user account who posts inside channels within a Locker
