@@ -6,8 +6,7 @@ updates, which you should consider a feature! It's yours now. Make it cool.
 
 This repository is configured variously by:
 - `.env`: Holds environment variables and sensitive secrets for dotenv loader
-- `bin/setup`: Prepares static site tooling
-- `bin/init`: Discovers channels for the bot to read
+- `bin/setup`: Prepares server- and dev-side tooling
 
 This repository contains multiple entry points:
 - `bin/Locker`: Reads channels in categories ending in ` Locker`
