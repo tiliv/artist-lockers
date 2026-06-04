@@ -79,9 +79,12 @@ IPFS
 
 Server
 : a Discord "Guild"
+
 Locker
 : a Discord "Category" of more channels
+
 Channel
 : a Discord text-type channel, or a forum_post-type thread
+
 Author
 : a Discord user account who posts inside channels within a Locker
