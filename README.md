@@ -10,7 +10,7 @@ This repository is configured variously by:
 - `bin/init`: Discovers channels for the bot to read
 
 This repository contains multiple entry points:
-- `bin/Locker`: Reads channels in categories
+- `bin/Locker`: Reads channels in categories ending in ` Locker`
 - `bin/daily "CategorySubstring"`: Reads channels in matching categories
 - `bin/serve`: Runs the Jekyll dev server for inspection
 
