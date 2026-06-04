@@ -1,6 +1,4 @@
 {% unless PARENT == link.parent_channel.id %}
-<!-- {% if CHANNEL %}</ol></li>{% endif %} -->
-<!-- <li data-channel-type="{{ link.channel.type }}"> -->
 <div data-channel-type="{{ link.channel.type }}">
   {% if link.parent_channel.id %}
     <code data-forum><pre>{{ link.parent_channel.name }}</pre></code>
@@ -8,7 +6,6 @@
     <code data-text><pre>{{ link.channel.name }}</pre></code>
   {% endif %}
 </div>
-<!-- <ol> -->
 {% endunless %}
 
 {%- capture slim %}{% include slim_record.html %}{% endcapture -%}

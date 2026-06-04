@@ -43,7 +43,6 @@ body > div  { background-color: oklab(35% 0 0); }
  div > h3   { background-color: oklab(30% 0 0); }
   ul > div  { background-color: oklab(25% 0 0); }
   ul        { background-color: oklab(20% 0 0); }
-  /* li > ol   { background-color: oklab(20% 0 0); } */
 
 #auth-user {
   align-items: center;
