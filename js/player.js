@@ -13,8 +13,10 @@ window.openPlayer = async function openPlayer(source) {
     ? JSON.parse(source.dataset.player)
     : source;
 
-  const nowPlaying = document.getElementById('now-playing');
-  const audio = document.getElementById('np-audio');
+  const area = document.getElementById('now-playing');
+  const audio = area.querySelector('[data-audio]');
+  const guildAvatar = area.querySelector('[data-guild-avatar]');
+  const gotoBtn = area.querySelector('[data-goto]');
 
   if (record.source_type === 'attachment') {
     // acquire stable cached blob first
@@ -23,30 +25,22 @@ window.openPlayer = async function openPlayer(source) {
 
     audio.src = blobUrl;
     audio.hidden = false;
-    document.querySelector('iframe#np-embed')?.remove();
+    document.querySelector('iframe')?.remove();
   } else {
     audio.hidden = true;
     // iframe handling later
   }
 
-  // stamp guild avatar
-  const guildAvatar = document.getElementById('np-guild-avatar');
   guildAvatar.src = guildAvatarUrl(record.guild_id);
-
-  document.getElementById('np-art').src = record.cover || '';
-  document.getElementById('np-label').textContent = record.label;
-
-  // wire goto button to scroll the li into view
-  const gotoBtn = document.getElementById('np-goto');
+  area.querySelector('[data-art]').src = record.cover || '';
+  area.querySelector('[data-label]').textContent = record.label;
   gotoBtn.onclick = () => {
-    document.querySelector(`li[data-message-id="${record.message_id}"]`)
+    document.querySelector(`[data-message-id="${record.message_id}"]`)
       ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
-  nowPlaying.hidden = false;
+  area.hidden = false;
   audio.play();
-
-  return false;
 }
 
 async function acquireBlob(record) {
